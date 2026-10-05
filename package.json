@@ -1,0 +1,17 @@
+{
+  "name": "story-format-parser",
+  "version": "1.0.0",
+  "description": "Parser and serializer for the .STORY plain text file format.",
+  "main": "parseStory.js",
+  "scripts": {
+    "test": "node parseStory.js"
+  },
+  "keywords": [
+    "story",
+    "parser",
+    "interactive-fiction",
+    "text-format"
+  ],
+  "author": "",
+  "license": "MIT"
+}
