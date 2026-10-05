@@ -141,6 +141,6 @@ function serializeStory(days) {
 }
 
 /**
- * Reads and parses a .STORY file asynchronously in Node.js.
- * @param {string} filePath - Path to the .STORY file.
- * @returns {Promise<{ days: Array
+ * Parses raw .STORY text content into structured objects.
+ * @param {string} text - Raw text contents of a .STORY file.
+ * @returns {{ days: Array
