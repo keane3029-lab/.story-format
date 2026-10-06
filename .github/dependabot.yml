@@ -1,0 +1,23 @@
+# .github/dependabot.yml
+version: 2
+updates:
+  # Check for GitHub Actions workflow updates daily
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 10
+
+  # Check for Node.js / npm package updates daily
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 10
+
+  # Check for Python / pip package updates daily
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 10
