@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="story-logo.svg" alt=".STORY Format Logo" width="100%">
+</p>
+
 # .STORY Format Parser & Serializer
 
 A lightweight JavaScript parser and serializer for the custom `.STORY` plain text file format, plus a Python port. Zero dependencies, works in **Node.js** and the **browser**.
@@ -23,7 +27,7 @@ mood: Tense
 ---
 bob: What was that noise
 * Steps echo down the hall.
-```
+
 
 ---
 
