@@ -160,3 +160,5 @@ npm test
 ---
 
 ## License
+
+[MIT](LICENSE)
