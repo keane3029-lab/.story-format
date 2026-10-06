@@ -125,7 +125,7 @@ function serializeStory(days) {
 
     if (dayObj.extra && typeof dayObj.extra === "object") {
       Object.entries(dayObj.extra).forEach(([k, v]) => {
-        headerLines.push(`\({k}:\){v}`);
+        headerLines.push(`${k}: ${v}`);
       });
     }
 
@@ -133,14 +133,13 @@ function serializeStory(days) {
       if (entry.type === "narration" || !entry.speaker) {
         return `* ${entry.text}`;
       }
-      return `\({entry.speaker}:\){entry.text}`;
+      return `${entry.speaker}: ${entry.text}`;
     });
 
     return [...headerLines, "---", ...bodyLines].join("\n");
   }).join("\n===\n");
 }
 
-/**
- * Parses raw .STORY text content into structured objects.
- * @param {string} text - Raw text contents of a .STORY file.
- * @returns {{ days: Array
+if if (typeof module === "object" && module.exports) {
+  module.exports = { parseStory, serializeStory };
+}
