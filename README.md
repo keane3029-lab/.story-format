@@ -1,12 +1,12 @@
 # .STORY Format Parser & Serializer
 
-A lightweight JavaScript parser and serializer for the custom `.STORY` plain text file format. Built with zero dependencies and cross-environment compatibility for **Node.js** and **Browser** environments.
+A lightweight JavaScript parser and serializer for the custom `.STORY` plain text file format, plus a Python port. Zero dependencies, works in **Node.js** and the **browser**.
 
 ---
 
 ## Format Overview
 
-A `.STORY` document structures narrative data into days containing optional headers and body interactions.
+A `.STORY` document is a list of days. Each day has optional headers, then a body of dialogue and narration.
 
 ```story
 day: 1
@@ -14,14 +14,14 @@ title: The Awakening
 weather: Rain
 ---
 # First scene
-ALICE: Hello world! Time is 10:30 AM
+ALICE: Hello world. Time is 10:30 AM
 * Thunder rumbles in the distance.
 ===
 day: 2
 title: Shadows
 mood: Tense
 ---
-bob: What was that noise?
+bob: What was that noise
 * Steps echo down the hall.
 ```
 
@@ -29,27 +29,59 @@ bob: What was that noise?
 
 ## Features
 
-- **Zero Dependencies:** Standard, vanilla JavaScript.
-- **Universal Export:** Works seamlessly across Node.js (`require`) and Browser (`<script>` tag) runtimes.
-- **Non-Throwing Parser:** Returns detailed `warnings` with line numbers for malformed lines instead of throwing syntax runtime errors.
-- **Full Serialization:** Losslessly converts structured story objects back into standard `.STORY` formatted text.
+- **Zero Dependencies:** vanilla JavaScript.
+- **Universal Export:** works with `require` in Node and a `<script>` tag in the browser.
+- **Non-Throwing Parser:** bad lines produce `warnings` with line numbers instead of exceptions.
+- **Full Serialization:** turns the parsed objects back into `.STORY` text.
+- **Python Port:** `open-storyfiles.py` does the same parse and serialize in Python and can load files from disk.
 
 ---
 
 ## Syntax Rules
 
-1. **Day Separator (`===`):** Separates days within a story file.
-2. **Header-Body Separator (`---`):** Divides header metadata from dialogue/narration lines within each day block.
-3. **Headers (`key: value`):** Reserved keys (`day`, `title`, `scene`, `mood`) map directly onto the day object. Custom/unknown keys are captured in `extra`.
-4. **Dialogue (`speaker: text`):** Dialogue lines are converted to lower-cased speaker identifiers (`speaker`) with body text (`text`).
-5. **Narration (`* text`):** Lines beginning with an asterisk are parsed as `type: "narration"`.
-6. **Comments (`# comment`):** Lines starting with `#` are ignored during parsing.
+1. **Day Separator (`===`):** on its own line, splits the file into days.
+2. **Header-Body Separator (`---`):** on its own line, ends the header and starts the body of a day.
+3. **Headers (`key: value`):** keys are lowercased. The reserved keys `day`, `title`, `scene` and `mood` map onto the day object. Any other key (like `weather` in the example) is stored in `extra`.
+4. **Day Number:** `day` becomes a number when it parses as one, otherwise it stays a string.
+5. **Dialogue (`speaker: text`):** speaker names are lowercased, so `ALICE:` becomes `alice`.
+6. **Narration (`* text`):** lines starting with `*` become narration entries.
+7. **Comments (`# comment`):** lines starting with `#` are ignored, and so are blank lines.
+8. **Bad Lines:** a header line with no colon is skipped with a warning. A body line with no colon is kept as narration and also gives a warning.
+
+---
+
+## Output Shape
+
+`parseStory(text)` returns `{ days, warnings }`.
+
+```js
+{
+  days: [
+    {
+      day: 1,                  // number, or string if not numeric, or null
+      title: "The Awakening",  // string or null
+      scene: null,             // string or null
+      mood: null,              // string or null
+      extra: { weather: "Rain" },
+      entries: [
+        { type: "dialogue",  speaker: "alice", text: "Hello world. Time is 10:30 AM" },
+        { type: "narration", speaker: null,    text: "Thunder rumbles in the distance." }
+      ]
+    }
+  ],
+  warnings: [
+    { line: 3, message: "Invalid header syntax: missing colon in line \"...\"" }
+  ]
+}
+```
+
+`warnings[].line` is the line number inside that day's block, counting from 1.
+
+`serializeStory(days)` takes the `days` array and returns `.STORY` text. Parsing then serializing keeps the data, but comments and blank lines are dropped, and speakers come out lowercase.
 
 ---
 
 ## Installation & Setup
-
-Clone the repository to your local machine:
 
 ```bash
 git clone https://github.com/keane3029-lab/.story-format.git
@@ -70,14 +102,12 @@ day: 1
 title: Prologue
 ---
 * The adventure begins.
-ALICE: Are you ready?
+ALICE: Are you ready
 `;
 
-// Parse text to object structure
 const { days, warnings } = parseStory(storyText);
 console.log(days);
 
-// Serialize object structure back to .STORY format
 const rawText = serializeStory(days);
 console.log(rawText);
 ```
@@ -93,11 +123,35 @@ console.log(rawText);
 </script>
 ```
 
+### Python
+
+`open-storyfiles.py` has `parse_story`, `load_story_file` and `serialize_story`, with the same output shape as the JS version.
+
+```python
+from importlib.machinery import SourceFileLoader
+
+story = SourceFileLoader("story", "open-storyfiles.py").load_module()
+
+result = story.load_story_file("sample.story")   # raises FileNotFoundError if missing
+print(result["days"])
+print(result["warnings"])
+
+print(story.serialize_story(result["days"]))
+```
+
+Run it directly to parse `sample.story` and print the JSON:
+
+```bash
+python open-storyfiles.py
+```
+
+If `sample.story` is missing, it runs a built-in inline test instead.
+
 ---
 
 ## Running Tests
 
-Run the built-in self-test script in Node.js:
+Run the built-in self-test in Node.js:
 
 ```bash
 npm test
@@ -106,5 +160,3 @@ npm test
 ---
 
 ## License
-
-[MIT](LICENSE)
