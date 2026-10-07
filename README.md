@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="story-logo.svg" alt=".STORY Format Logo" width="100%">
+  <img src="story-logo.png" alt=".STORY Format Logo" width="100%">
 </p>
 
 # .STORY Format Parser & Serializer
