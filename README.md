@@ -166,3 +166,12 @@ npm test
 ## License
 
 [MIT](LICENSE)
+
+---
+
+---
+
+## About
+
+- [About .STORY](about.md)
+- [Creator's Note](creators-note.md)
