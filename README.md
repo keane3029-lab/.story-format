@@ -27,7 +27,7 @@ mood: Tense
 ---
 bob: What was that noise
 * Steps echo down the hall.
-
+```
 
 ---
 
@@ -132,9 +132,11 @@ console.log(rawText);
 `open-storyfiles.py` has `parse_story`, `load_story_file` and `serialize_story`, with the same output shape as the JS version.
 
 ```python
-from importlib.machinery import SourceFileLoader
+import importlib.util
 
-story = SourceFileLoader("story", "open-storyfiles.py").load_module()
+spec = importlib.util.spec_from_file_location("story", "open-storyfiles.py")
+story = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(story)
 
 result = story.load_story_file("sample.story")   # raises FileNotFoundError if missing
 print(result["days"])
@@ -166,8 +168,6 @@ npm test
 ## License
 
 [MIT](LICENSE)
-
----
 
 ---
 
