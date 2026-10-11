@@ -1,10 +1,22 @@
 {
   "name": "story-format-parser",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Parser and serializer for the .STORY plain text file format.",
   "main": "parseStory.js",
+  "files": [
+    "parseStory.js",
+    "open-storyfiles.py",
+    "sample.story",
+    "about.md",
+    "creators-note.md",
+    "story-logo.png"
+  ],
   "scripts": {
-    "test": "node parseStory.js"
+    "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/keane3029-lab/.story-format.git"
   },
   "keywords": [
     "story",

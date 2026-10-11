@@ -57,8 +57,8 @@ function parseStory(text) {
 
         if (["day", "title", "scene", "mood"].includes(key)) {
           if (key === "day") {
-            const parsedDay = parseInt(value, 10);
-            dayObj.day = isNaN(parsedDay) ? value : parsedDay;
+            // Strict integer check so "2b" stays a string (matches the Python port)
+            dayObj.day = /^[+-]?\d+$/.test(value) ? parseInt(value, 10) : value;
           } else {
             dayObj[key] = value;
           }
@@ -104,7 +104,9 @@ function parseStory(text) {
       }
     });
 
-    if (dayObj.day !== null || dayObj.entries.length > 0 || Object.keys(dayObj.extra).length > 0) {
+    const hasHeader = dayObj.day !== null || dayObj.title !== null ||
+      dayObj.scene !== null || dayObj.mood !== null;
+    if (hasHeader || dayObj.entries.length > 0 || Object.keys(dayObj.extra).length > 0) {
       days.push(dayObj);
     }
   });
@@ -140,6 +142,6 @@ function serializeStory(days) {
   }).join("\n===\n");
 }
 
-if if (typeof module === "object" && module.exports) {
+if (typeof module === "object" && module.exports) {
   module.exports = { parseStory, serializeStory };
 }

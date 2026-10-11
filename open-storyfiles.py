@@ -57,9 +57,10 @@ def parse_story(text: str) -> dict:
 
                 if key in ["day", "title", "scene", "mood"]:
                     if key == "day":
-                        try:
+                        # Strict integer check so "2b" stays a string (matches the JS port)
+                        if re.fullmatch(r'[+-]?[0-9]+', value):
                             day_obj["day"] = int(value)
-                        except ValueError:
+                        else:
                             day_obj["day"] = value
                     else:
                         day_obj[key] = value
@@ -98,7 +99,8 @@ def parse_story(text: str) -> dict:
                         "text": entry_text
                     })
 
-        if day_obj["day"] is not None or len(day_obj["entries"]) > 0 or len(day_obj["extra"]) > 0:
+        has_header = any(day_obj[k] is not None for k in ("day", "title", "scene", "mood"))
+        if has_header or len(day_obj["entries"]) > 0 or len(day_obj["extra"]) > 0:
             days.append(day_obj)
 
     return {"days": days, "warnings": warnings}
@@ -149,7 +151,7 @@ def serialize_story(days: list) -> str:
             else:
                 body_lines.append(f"{entry.get('speaker', '')}: {entry.get('text', '')}")
 
-        full_block = "\n".join(header_lines) + "\n---\n" + "\n".join(body_lines)
+        full_block = "\n".join(header_lines + ["---"] + body_lines)
         day_blocks.append(full_block)
 
     return "\n===\n".join(day_blocks)
